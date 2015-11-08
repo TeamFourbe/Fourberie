@@ -40,8 +40,8 @@ public class PlayerManager : MonoBehaviour {
     public void InstanciatePlayer()
     {
         GameObject instance = Instantiate(prefab) as GameObject;
-        instance.GetComponent<PlayerScript>().SetId(playerList.Count);
-        TurnManager.instance.playerIdList.Add(playerList.Count);
+        instance.GetComponent<PlayerScript>().SetId(playerList.Count+1);
+        TurnManager.instance.playerIdList.Add(playerList.Count+1);
     }
 
     public void useRessource(int playerId)
@@ -60,5 +60,15 @@ public class PlayerManager : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public void Attack()
+    {
+
+    }
+
+    public void Reinforce()
+    {
+
     }
 }

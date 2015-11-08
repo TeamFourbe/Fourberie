@@ -41,7 +41,14 @@ public class TerritoryController : MonoBehaviour {
 
         if (newEtat == Etat.GOAL)
         {
-            //GetComponent<Renderer>().material.color = Color.cyan;
+            if(id == 1)
+            {
+                GetComponent<Renderer>().material.color = Color.cyan;
+            }
+            else
+            {
+                GetComponent<Renderer>().material.color = Color.red;
+            }
         }
 
         idPlayer = id;
@@ -50,9 +57,9 @@ public class TerritoryController : MonoBehaviour {
 
     public bool IsNear(int id)
     {
-        if(getNeighboor(0, 1).idPlayer == id || getNeighboor(0, -1).idPlayer == id || getNeighboor(1, 0).idPlayer == id || getNeighboor(-1, 0).idPlayer == id) {
+       /*if(getNeighboor(0, 1).idPlayer == id || getNeighboor(0, -1).idPlayer == id || getNeighboor(1, 0).idPlayer == id || getNeighboor(-1, 0).idPlayer == id) {
             GetComponent<Renderer>().material.color = Color.red;
-        }
+        }*/
         return getNeighboor(0,1).idPlayer == id || getNeighboor(0, -1).idPlayer == id || getNeighboor(1, 0).idPlayer == id || getNeighboor(-1, 0).idPlayer == id;
     }
 

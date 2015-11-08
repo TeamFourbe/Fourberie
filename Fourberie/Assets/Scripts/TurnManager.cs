@@ -14,12 +14,12 @@ public class TurnManager : MonoBehaviour {
     }
 
     public List<int> playerIdList;
-    private int currentPlayer;
+    public int currentPlayer;
 
     // Use this for initialization
     void Start () {
         playerIdList = new List<int>();
-        currentPlayer = 0;
+        currentPlayer = 1;
 	}
 	
 	// Update is called once per frame
@@ -29,9 +29,9 @@ public class TurnManager : MonoBehaviour {
 
     public void Endturn()
     {
-        currentPlayer++;
         currentPlayer = currentPlayer % playerIdList.Count;
-        if(currentPlayer == 0)  
+        currentPlayer++;
+        if(currentPlayer == 1)  
             EndOfGlobalTurn();
     }
 
