@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
 
-public class MapManager : MonoBehaviour
+public class MapManager : NetworkBehaviour
 {
 
     static MapManager instance;
@@ -27,6 +28,7 @@ public class MapManager : MonoBehaviour
 
     public GameObject territoryPrefab;
     public GameObject wallPrefab;
+    public GameObject mapContainer;
 
     public GameObject[,] map;
     public List<GameObject> regionList;
@@ -36,6 +38,8 @@ public class MapManager : MonoBehaviour
 
     public int nbRegionMax = 10;
 
+    public GameObject generatingGo;
+
     // Use this for initialization
 
     GameObject mapParent;
@@ -44,18 +48,32 @@ public class MapManager : MonoBehaviour
     void Awake()
     {
         instance = this;
+    }
 
+    public override void OnStartServer()
+    {
+        if (hasAuthority)
+        {
+            CmdGenerateBoard();
+            Debug.Log("j'ai la puissance");
+        }
+    }
+    [Command]
+    void CmdGenerateBoard()
+    {
         regionList = new List<GameObject>();
         map = new GameObject[width, length];
 
-        mapParent = new GameObject();
+        mapParent = Instantiate(mapContainer) as GameObject;
         mapParent.name = "Map";
+        generatingGo = mapParent;
 
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < length; j++)
             {
                 GameObject go = Instantiate(territoryPrefab, new Vector2(i, j), Quaternion.identity) as GameObject;
+                NetworkServer.Spawn(go);
                 map[i, j] = go;
 
                 if (i == 0 && j == (int)(length / 2))
@@ -71,6 +89,8 @@ public class MapManager : MonoBehaviour
         }
 
         CreateRegions();
+        NetworkServer.Spawn(GameObject.Find("Map"));
+    
     }
 
     void CreateRegions()
@@ -232,7 +252,7 @@ public class MapManager : MonoBehaviour
                 wall.transform.Rotate(0, 0, 90);
                 break;
         }
-
         wall.transform.parent = frontiersParent.transform;
+        //NetworkServer.Spawn(wallPrefab);
     }
 }

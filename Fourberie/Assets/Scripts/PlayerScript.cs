@@ -11,11 +11,6 @@ public class PlayerScript : MonoBehaviour {
         nbOfRessource = 10;
         PlayerManager.instance.addPlayer(this);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
     public int GetId()
     {

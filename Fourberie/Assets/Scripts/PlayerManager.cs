@@ -46,13 +46,14 @@ public class PlayerManager : MonoBehaviour {
     {
         playerList.Add(player);
         player.playerColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+        TurnManager.instance.playerIdList.Add(playerList.Count);
     }
 
     public void InstanciatePlayer()
     {
         GameObject instance = Instantiate(prefab) as GameObject;
         instance.GetComponent<PlayerScript>().SetId(playerList.Count+1);
-        TurnManager.instance.playerIdList.Add(playerList.Count+1);
+        
     }
 
     public void useRessource(int playerId)
