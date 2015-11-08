@@ -25,6 +25,4 @@ public class PlayerScript : MonoBehaviour {
     {
         id = Id;
     }
-
-
 }

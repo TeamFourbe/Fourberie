@@ -40,7 +40,25 @@ public class PlayerManager : MonoBehaviour {
     public void InstanciatePlayer()
     {
         GameObject instance = Instantiate(prefab) as GameObject;
-        instance.GetComponent<PlayerScript>().SetId(playerList.Count+1);
+        instance.GetComponent<PlayerScript>().SetId(playerList.Count);
         TurnManager.instance.playerIdList.Add(playerList.Count);
+    }
+
+    public void useRessource(int playerId)
+    {
+        for(int i =0; i < playerList.Count; ++i)
+        {
+            if(playerId == playerList[i].GetId())
+            {
+                if(playerList[i].nbOfRessource > 0)
+                {
+                    playerList[i].nbOfRessource--;
+                }
+                else
+                {
+                    Debug.Log("T'es null");
+                }
+            }
+        }
     }
 }

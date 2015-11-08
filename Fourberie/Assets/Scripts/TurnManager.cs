@@ -30,7 +30,7 @@ public class TurnManager : MonoBehaviour {
     public void Endturn()
     {
         currentPlayer++;
-        currentPlayer = currentPlayer % playerIdList.Count+1;
+        currentPlayer = currentPlayer % playerIdList.Count;
         if(currentPlayer == 0)  
             EndOfGlobalTurn();
     }
