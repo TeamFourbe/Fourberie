@@ -14,19 +14,34 @@ public class tileCursorTest : MonoBehaviour
 
 
     public void OnMouseOver()
-{
+    {
+
         TerritoryController territory = GetComponent<TerritoryController>();
         if(territory.etat == TerritoryController.Etat.FREE && territory.IsNear(TurnManager.instance.currentPlayer))
-                Cursor.SetCursor(ConquereTexture, hotSpot, cursorMode);
-        if(territory.etat == TerritoryController.Etat.CAPTURED || territory.etat == TerritoryController.Etat.GOAL)
+        {
+            Cursor.SetCursor(ConquereTexture, hotSpot, cursorMode);
+            if (Input.GetMouseButtonDown(0))
+            {
+                PlayerManager.instance.Conquer(TurnManager.instance.currentPlayer, gameObject);
+            }
+        }
+        else if (territory.etat == TerritoryController.Etat.CAPTURED || territory.etat == TerritoryController.Etat.GOAL)
         {
             if(territory.idPlayer != TurnManager.instance.currentPlayer && territory.IsNear(TurnManager.instance.currentPlayer))
             {
                 Cursor.SetCursor(AttackTexture, hotSpot, cursorMode);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    PlayerManager.instance.Attack(TurnManager.instance.currentPlayer, gameObject);
+                }
             }  
             else if (territory.idPlayer == TurnManager.instance.currentPlayer)
             {
                 Cursor.SetCursor(RenforceTexture, hotSpot, cursorMode);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    PlayerManager.instance.Reinforce(TurnManager.instance.currentPlayer, gameObject);
+                }
             }
 
         }               

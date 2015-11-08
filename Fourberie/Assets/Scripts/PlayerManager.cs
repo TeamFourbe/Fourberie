@@ -16,6 +16,7 @@ public class PlayerManager : MonoBehaviour {
     public List<PlayerScript> playerList;
 
     public GameObject prefab;
+    public int regen;
 
     // Use this for initialization
     void Start () {
@@ -27,14 +28,24 @@ public class PlayerManager : MonoBehaviour {
 	
 	}
 
-    public void DistributeResources(int playerId, int nbOfResources)
+    public void endRegen()
     {
+        for (int i = 0;i< playerList.Count;++i)
+        {
+            playerList[i].nbOfRessource += regen;
+        }
+    }
 
+    public void DistributeResources(int playerID, int nbOfResources)
+    {
+        Debug.Log("DistributeResources to " + playerID + " for " + nbOfResources);
+        playerList[playerID - 1].nbOfRessource += nbOfResources;
     }
 
     public void addPlayer(PlayerScript player)
     {
         playerList.Add(player);
+        player.playerColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
     }
 
     public void InstanciatePlayer()
@@ -62,13 +73,54 @@ public class PlayerManager : MonoBehaviour {
         }
     }
 
-    public void Attack()
+    public void Conquer(int playerID, GameObject territory)
     {
-
+        if (playerList[playerID - 1].nbOfRessource <= 0)
+        {
+            TurnManager.instance.Endturn();
+        }
+        else
+        {
+            TerritoryController tc = territory.GetComponent<TerritoryController>();
+            tc.gameObject.GetComponent<Renderer>().material.color = playerList[playerID - 1].playerColor;
+            tc.SwitchEtat(TerritoryController.Etat.CAPTURED, playerID);
+            playerList[playerID - 1].nbOfRessource--;
+        }
+        
     }
 
-    public void Reinforce()
+    public void Attack(int playerID, GameObject territory)
     {
+        if (playerList[playerID - 1].nbOfRessource <= 0)
+        {
+            TurnManager.instance.Endturn();
+        }
+        else
+        {
+            TerritoryController tc = territory.GetComponent<TerritoryController>();
+            tc.strength--;
+            playerList[playerID - 1].nbOfRessource--;
+            if(tc.strength <= 0)
+            {
+                tc.gameObject.GetComponent<Renderer>().material.color = Color.white;
+                tc.SwitchEtat(TerritoryController.Etat.FREE, 0);
+            }
+        }
+        Debug.Log("je attaque" + playerID);
+    }
 
+    public void Reinforce(int playerID, GameObject territory)
+    {
+        if (playerList[playerID - 1].nbOfRessource <= 0)
+        {
+            TurnManager.instance.Endturn();
+        }
+        else
+        {
+            TerritoryController tc = territory.GetComponent<TerritoryController>();
+            tc.strength++;
+            playerList[playerID - 1].nbOfRessource--;
+        }
+        Debug.Log("je renforce" + playerID);
     }
 }

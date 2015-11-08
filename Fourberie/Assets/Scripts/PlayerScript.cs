@@ -5,6 +5,7 @@ public class PlayerScript : MonoBehaviour {
 
     public int id;
     public int nbOfRessource;
+    public Color playerColor;
     // Use this for initialization
     void Start () {
         nbOfRessource = 10;

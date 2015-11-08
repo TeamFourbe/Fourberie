@@ -37,6 +37,12 @@ public class TurnManager : MonoBehaviour {
 
     public void EndOfGlobalTurn()
     {
-        Debug.Log("Fin de tour global");
+        Debug.Log("fin de tour global");
+        List<GameObject> regionList = MapManager.Instance.regionList;
+        for (int i =0; i < regionList.Count; ++i)
+        {
+            regionList[i].GetComponent<RegionController>().giveRessources();
+        }
+        PlayerManager.instance.endRegen();
     }
 }
