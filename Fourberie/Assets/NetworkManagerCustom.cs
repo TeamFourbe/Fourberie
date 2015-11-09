@@ -9,7 +9,6 @@ public class NetworkManagerCustom : NetworkManager {
         Debug.Log("serverStart");
         NetworkServer.RegisterHandler(Message.SetParent, OnSetParent);
     }
-
     private void OnSetParent(NetworkMessage netMsg)
     {
         SetParentMessage msg = netMsg.ReadMessage<SetParentMessage>();
