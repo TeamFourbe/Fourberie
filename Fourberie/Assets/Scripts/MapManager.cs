@@ -91,10 +91,18 @@ public class MapManager : NetworkBehaviour
         CreateRegions();
     
     }
+    public static void OnProut(NetworkMessage netMsg)
+    {
+        SetParentMessage msg = netMsg.ReadMessage<SetParentMessage>();
+        Debug.Log("OnScoreMessage " + msg.netId);
+    }
 
     private static void LinkToParent(GameObject child, GameObject parent)
     {
         child.transform.parent = parent.transform;
+        // POURQUOI J'AI PAS DE CONNECTION AU NETWORKSERVER ?
+        NetworkServer.RegisterHandler(Message.SetParent, MapManager.OnProut );
+        Debug.Log(NetworkServer.connections.Count);
         NetworkServer.SendToAll(Message.SetParent, new SetParentMessage(child, parent));
     }
 
