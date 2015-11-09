@@ -66,7 +66,7 @@ public class MapManager : NetworkBehaviour
 
         mapParent = Instantiate(mapContainer) as GameObject;
         mapParent.name = "Map";
-        generatingGo = mapParent;
+        NetworkServer.Spawn(mapParent);
 
         for (int i = 0; i < width; i++)
         {
@@ -89,8 +89,13 @@ public class MapManager : NetworkBehaviour
         }
 
         CreateRegions();
-        NetworkServer.Spawn(GameObject.Find("Map"));
     
+    }
+
+    private static void LinkToParent(GameObject child, GameObject parent)
+    {
+        child.transform.parent = parent.transform;
+        NetworkServer.SendToAll(Message.SetParent, new SetParentMessage(child, parent));
     }
 
     void CreateRegions()
@@ -119,6 +124,9 @@ public class MapManager : NetworkBehaviour
         frontiersParent = new GameObject();
         frontiersParent.name = "Frontieres";
         frontiersParent.transform.parent = mapParent.transform;
+        frontiersParent.AddComponent<NetworkIdentity>();
+        NetworkServer.Spawn(frontiersParent);
+        LinkToParent(frontiersParent, mapParent);
 
         for (int i = 0; i < width; i++)
         {
@@ -151,6 +159,9 @@ public class MapManager : NetworkBehaviour
         GameObject region = new GameObject();
         region.name = r.name + " bis";
         region.transform.parent = mapParent.transform;
+        region.AddComponent<NetworkIdentity>();
+        NetworkServer.Spawn(region);
+        LinkToParent(region, mapParent);
 
         for (int i = 0; i < width / 2; i++)
         {
@@ -160,6 +171,8 @@ public class MapManager : NetworkBehaviour
                 {
                     map[width - i - 1, j].GetComponent<TerritoryController>().Region = region;
                     map[width - i - 1, j].transform.parent = region.transform;
+                    NetworkServer.Spawn(map[width - i - 1, j]);
+                    LinkToParent(map[width - i - 1, j], region);
                 }
             }
         }
@@ -213,6 +226,9 @@ public class MapManager : NetworkBehaviour
         GameObject region = new GameObject();
         region.name = "region " + nbRegion;
         region.transform.parent = mapParent.transform;
+        region.AddComponent<NetworkIdentity>();
+        NetworkServer.Spawn(region);
+        LinkToParent(region, mapParent);
 
         int x = Random.Range(1, width / 2 - 1);
         int y = Random.Range(1, length - 1);
@@ -223,6 +239,8 @@ public class MapManager : NetworkBehaviour
             {
                 map[x + ix, y + iy].GetComponent<TerritoryController>().Region = region;
                 map[x + ix, y + iy].transform.parent = region.transform;
+                NetworkServer.Spawn(map[x + ix, y + iy]);
+                LinkToParent(map[x + ix, y + iy], region);
             }
         }
 
@@ -253,6 +271,7 @@ public class MapManager : NetworkBehaviour
                 break;
         }
         wall.transform.parent = frontiersParent.transform;
-        //NetworkServer.Spawn(wallPrefab);
+        NetworkServer.Spawn(wall);
+        LinkToParent(wall, frontiersParent);
     }
 }
