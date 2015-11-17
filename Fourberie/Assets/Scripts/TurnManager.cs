@@ -9,7 +9,10 @@ public class TurnManager : MonoBehaviour {
    
     void Awake()
     {
-        instance = this;
+        if (instance == null)
+            instance = this;
+        else if (this != instance)
+            Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
     }
 

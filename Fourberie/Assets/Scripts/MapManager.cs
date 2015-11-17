@@ -31,7 +31,8 @@ public class MapManager : NetworkBehaviour
     public GameObject mapContainer;
 
     public GameObject[] mapList;
-    public GameObject[,] map;
+    public GameObject[] map;
+    public GameObject[,] tmpMap;
     public List<GameObject> regionList;
 
     public int width = 50;
@@ -47,7 +48,10 @@ public class MapManager : NetworkBehaviour
 
     void Awake()
     {
-        instance = this;
+        if (instance == null)
+            instance = this;
+        else if (this != instance)
+            Destroy(gameObject);
     }
 
     public override void OnStartServer()
@@ -82,11 +86,12 @@ public class MapManager : NetworkBehaviour
     void CmdGenerateBoard()
     {
         regionList = new List<GameObject>();
-        map = new GameObject[width, length];
-        GameObject currentMap = mapList[Random.Range(0, mapList.Length)]; 
-        mapParent = Instantiate(mapContainer) as GameObject;
+        tmpMap = new GameObject[width, length];
+        GameObject currentMap = mapList[Random.Range(0, mapList.Length)];
+        mapParent = Instantiate(currentMap) as GameObject;
+        //mapParent = Instantiate(mapContainer) as GameObject;
         mapParent.name = "Map";
-
+        /*
         
         for (int i = 0; i < width; i++)
         {
@@ -94,7 +99,7 @@ public class MapManager : NetworkBehaviour
             {
                 GameObject go = Instantiate(territoryPrefab, new Vector2(i, j), Quaternion.identity) as GameObject;
                 //NetworkServer.Spawn(go);
-                map[i, j] = go;
+                tmpMap[i, j] = go;
 
                 if (i == 0 && j == (int)(length / 2))
                 {
@@ -109,6 +114,14 @@ public class MapManager : NetworkBehaviour
         }
 
         CreateRegions();
+        map = new GameObject[width * length];
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < length; j++)
+            {
+                map[i + j * length] = tmpMap[i, j];
+            }
+        }*/
         mapParent.GetComponent<Map>().map = map;
         mapParent.GetComponent<Map>().regionList = regionList;
         NetworkServer.Spawn(mapParent);
@@ -154,23 +167,23 @@ public class MapManager : NetworkBehaviour
         {
             for (int j = 0; j < length; j++)
             {
-                TerritoryController tc = map[i, j].GetComponent<TerritoryController>();
+                TerritoryController tc = tmpMap[i, j].GetComponent<TerritoryController>();
 
-                if (tc.getNeighboor(0, 1).GetComponent<TerritoryController>().Region != tc.Region || tc.getNeighboor(0, 1) == map[i, j] || map[i, j].transform.localPosition.y == length - 1)
+                if (tc.getNeighboor(0, 1).GetComponent<TerritoryController>().Region != tc.Region || tc.getNeighboor(0, 1) == tmpMap[i, j] || tmpMap[i, j].transform.localPosition.y == length - 1)
                 {
-                    SetFrontier(map[i, j], WallPosition.TOP);
+                    SetFrontier(tmpMap[i, j], WallPosition.TOP);
                 }
-                if (tc.getNeighboor(-1, 0).GetComponent<TerritoryController>().Region != tc.Region || map[i, j].transform.localPosition.x == 0)
+                if (tc.getNeighboor(-1, 0).GetComponent<TerritoryController>().Region != tc.Region || tmpMap[i, j].transform.localPosition.x == 0)
                 {
-                    SetFrontier(map[i, j], WallPosition.LEFT);
+                    SetFrontier(tmpMap[i, j], WallPosition.LEFT);
                 }
-                if (map[i, j].transform.localPosition.x == width - 1)
+                if (tmpMap[i, j].transform.localPosition.x == width - 1)
                 {
-                    SetFrontier(map[i, j], WallPosition.RIGHT);
+                    SetFrontier(tmpMap[i, j], WallPosition.RIGHT);
                 }
-                if (map[i, j].transform.localPosition.y == 0)
+                if (tmpMap[i, j].transform.localPosition.y == 0)
                 {
-                    SetFrontier(map[i, j], WallPosition.BOTTOM);
+                    SetFrontier(tmpMap[i, j], WallPosition.BOTTOM);
                 }
             }
         }
@@ -189,10 +202,10 @@ public class MapManager : NetworkBehaviour
         {
             for (int j = 0; j < length; j++)
             {
-                if (map[i, j].GetComponent<TerritoryController>().Region == r)
+                if (tmpMap[i, j].GetComponent<TerritoryController>().Region == r)
                 {
-                    map[width - i - 1, j].GetComponent<TerritoryController>().Region = region;
-                    map[width - i - 1, j].transform.parent = region.transform;
+                    tmpMap[width - i - 1, j].GetComponent<TerritoryController>().Region = region;
+                    tmpMap[width - i - 1, j].transform.parent = region.transform;
                     //NetworkServer.Spawn(map[width - i - 1, j]);
                     //RpcSyncParent(map[width - i - 1, j], region);
                 }
@@ -209,7 +222,7 @@ public class MapManager : NetworkBehaviour
         {
             for (int j = 0; j < length; j++)
             {
-                TerritoryController tc = map[i, j].GetComponent<TerritoryController>();
+                TerritoryController tc = tmpMap[i, j].GetComponent<TerritoryController>();
 
                 if (!tc.Region)
                 {
@@ -236,7 +249,7 @@ public class MapManager : NetworkBehaviour
                     tc.Region = otherTc.Region;
                     if (otherTc.Region)
                     {
-                        map[i, j].transform.parent = otherTc.Region.transform;
+                        tmpMap[i, j].transform.parent = otherTc.Region.transform;
                     }
                 }
             }
@@ -259,8 +272,8 @@ public class MapManager : NetworkBehaviour
         {
             for (int iy = -1; iy <= 1; iy++)
             {
-                map[x + ix, y + iy].GetComponent<TerritoryController>().Region = region;
-                map[x + ix, y + iy].transform.parent = region.transform;
+                tmpMap[x + ix, y + iy].GetComponent<TerritoryController>().Region = region;
+                tmpMap[x + ix, y + iy].transform.parent = region.transform;
                 //NetworkServer.Spawn(map[x + ix, y + iy]);
                 //RpcSyncParent(map[x + ix, y + iy], region);
             }

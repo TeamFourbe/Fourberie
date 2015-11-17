@@ -14,5 +14,6 @@ public class NetworkManagerCustom : NetworkManager {
         SetParentMessage msg = netMsg.ReadMessage<SetParentMessage>();
         ClientScene.objects[msg.netId].transform.parent = ClientScene.objects[msg.parentNetId].transform;
     }
+    
 
 }

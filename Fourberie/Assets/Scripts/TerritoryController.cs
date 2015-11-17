@@ -68,7 +68,7 @@ public class TerritoryController : MonoBehaviour {
 
         if((int)transform.localPosition.x + x <= MapManager.Instance.width-1 && (int)transform.localPosition.y + y <= MapManager.Instance.length-1 && (int)transform.localPosition.y + y >= 0 && (int)transform.localPosition.x + x >= 0)
         {
-            return MapManager.Instance.map[(int)transform.localPosition.x + x, (int)transform.localPosition.y + y].GetComponent<TerritoryController>();
+            return MapManager.Instance.map[(int)transform.localPosition.x + x +((int)transform.localPosition.y + y)*MapManager.Instance.length].GetComponent<TerritoryController>();
         }
         else
         {
